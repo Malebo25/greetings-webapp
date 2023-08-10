@@ -1,0 +1,89 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/simple-grid.min.css" />
+    <link rel="stylesheet" href="css/greet.css" />
+    <title>greetings widget</title>
+  </head>
+  <body>
+    <div class="container">
+
+    <div class="row">
+      <div class="col-12">
+        <center>
+
+          <h1>GREETINGS</h1>
+        </center>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <center>
+          <div>
+
+            <span class="counter">{{counter}}</span>
+          </div>
+          <div class="col-12">
+            <center>
+
+              <span class="greetUserName" value="">{{message}}</span>
+            </center>
+          </div>
+          <form class="textbox" action="/details" method="POST">
+            <label for="name">Name:</label>
+
+            <input type="text" name="name" id="" class="nameText" value="" />
+
+          <div class="col-12 languageBTN">
+            <center>
+
+              <label class="col-4">
+                <input
+                  type="radio"
+                  name="languagetype"
+                  class="languageType"
+                  value="english"
+                />
+                <span class="language eng">English</span>
+              </label>
+              <label class="col-4">
+                <input
+                  type="radio"
+                  name="languagetype"
+                  class="languageType"
+                  value="setswana"
+                />
+                <span class="language">SeTswana</span>
+              </label>
+              <label class="col-4 xhosa">
+                <input
+                  type="radio"
+                  name="languagetype"
+                  class="languageType"
+                  value="isixhosa"
+                />
+                <span class="language">isiXhosa</span>
+              </label>
+            </center>
+
+            <div class="myBTN">
+
+              <button type="submit" class="greetMeBtn">Greet Me</button>
+              <a href="/reset" ><button type="button" class="resetBtn">reset</button></a>
+            </div>
+          </form>
+
+          </div>
+        </center>
+
+      </div>
+
+    </div>
+
+    </div>
+    
+
+  </body>
+</html>

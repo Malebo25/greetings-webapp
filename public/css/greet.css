@@ -1,0 +1,107 @@
+:root {
+  --red: #dd403a;
+  --prp: #3e363f;
+  --ivory: #fffce8;
+  --drk: #1f0318;
+  --greyish: #e5f2c9;
+}
+
+@font-face {
+  font-family: "flowers";
+  src: url("./flowers-font/Flowers-YlzO.ttf")
+}
+body {
+  background: -webkit-linear-gradient(#fffce8, #e5f2c9);
+}
+h1 {
+  font-size: 3rem;
+  font-family: "flowers";
+  
+}
+form {
+  font-family: "greet";
+  font-size: 1rem;
+}
+
+.greetMeBtn {
+  margin-right: 0.1rem;
+  font-size: 20px;
+}
+.resetBtn {
+  font-size: 20px;
+  background-color: #dd403a;
+}
+span {
+  font-size: 25px;
+  font-family: "greet";
+}
+
+button {
+  margin-top: 1em;
+  transition-duration: 0.4s;
+
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #3e363f;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.4s;
+}
+button:hover {
+  background-color: lightslategray;
+
+  color: white;
+}
+.counter {
+  font-size: 1.7em;
+}
+.language {
+  font-size: 1em;
+  
+  
+}
+.textbox{
+  
+}
+.languageBTN {
+  padding-top: 1em;
+}
+.nameText {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 30%;
+  font-size: 2em;
+  
+}
+.danger {
+  color: red;
+}
+.success{
+  color: green;
+}
+.greetUserName {
+  font-size: 2em;
+}
+
+@media(min-width:600px){
+  .row{
+    padding-top: 0.5em;
+  }
+  .languageBTN label {
+    width: 96.5%;
+    /* padding-right:680px ;  */
+    
+  }
+
+  .myBTN{
+    /* padding-left: 2em; */
+  }
+   
+   
+}
