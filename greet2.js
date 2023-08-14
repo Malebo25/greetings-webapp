@@ -82,6 +82,10 @@ export default function greetMe(myCounter) {
     myMessage = ""; // Reset the message
     namesGreeted = {}; // Clear the namesGreeted object
   }
+  function getGreetCountForUser(userName) {
+    return namesGreeted[userName.toLowerCase()] || 0;
+  }
+
   return {
     greetUser,
     setUser,
@@ -92,5 +96,6 @@ export default function greetMe(myCounter) {
     error,
     getMessage,
     reset,
+    getGreetCountForUser,
   };
 }

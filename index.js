@@ -54,6 +54,18 @@ app.post("/details", function (req, res) {
   greet.namesAndCounter(req.body.name, req.body.languagetype);
   res.redirect("/");
 });
+app.get("/greeted", function (req, res) {
+  const greetedNames = Object.keys(greet.getNamesGreeted()); // to get object keys which are names entered keys
+  res.render("greeted", { namesGreeted: greetedNames });
+  console.log(greetedNames);
+});
+app.get("/counter/:userName", function (req, res) {
+  const userName = req.params.userName.toLowerCase();
+  const greetCount = greet.getGreetCountForUser(userName);
+
+  res.render("counter", { userName, greetCount });
+});
+
 app.get("/reset", function (req, res) {
   greet.reset(); // Call the reset function to clear counter and message
   res.redirect("/");

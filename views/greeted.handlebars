@@ -1,0 +1,16 @@
+<div class="row">
+
+  <h1>Names greeted</h1>
+  <table>
+    <tr>
+      <th>Names</th>
+
+    </tr>
+    {{#each namesGreeted}}
+      <tr>
+        <td><a href="/counter/{{this}}">{{this}}</a></td>
+
+      </tr>
+    {{/each}}
+  </table>
+</div>
