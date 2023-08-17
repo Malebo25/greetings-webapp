@@ -46,8 +46,6 @@ app.get("/", function (req, res) {
 app.post("/details", function (req, res) {
   if (!req.body.name) {
     req.flash("error", "Please enter a name"); // Set a flash message for no username
-    // res.redirect("/");
-    // return;
   }
 
   greet.greetUser(req.body.name, req.body.languagetype);
