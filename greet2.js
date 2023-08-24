@@ -1,24 +1,54 @@
+import dotenv from "dotenv";
+dotenv.config();
+import pgPromise from "pg-promise";
+
+const pgp = pgPromise();
+const connectionString =
+  process.env.DATABASE_URL ||
+  "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
+const db = pgp(connectionString);
+
 export default function greetMe(myCounter) {
   var patternCheck = /^[a-zA-Z]+$/;
   var greetingsCounter = myCounter || 0;
   var myMessage = "";
   var namesGreeted = {};
   var user;
-  function greetUser(userName, language) {
-    // if (!userName && language) {
-    //   return "Please enter Name and Language";
-    // }
+  async function greetUser(userName, language) {
     if (userName && language) {
       if (patternCheck.test(userName)) {
         if (language === "english") {
           myMessage = "Hello " + userName;
-          return myMessage;
         } else if (language === "setswana") {
           myMessage = "Dumela " + userName;
-          return myMessage;
         } else {
           myMessage = "Molo " + userName;
-          return myMessage;
+        }
+
+        try {
+          // Check if the user exists in the "users" table
+          const existingUser = await db.oneOrNone(
+            "SELECT * FROM users WHERE name = $1",
+            userName.toLowerCase()
+          );
+
+          if (existingUser) {
+            // User exists, update the count
+            await db.none(
+              "UPDATE users SET count = count + 1 WHERE name = $1",
+              userName.toLowerCase()
+            );
+          } else {
+            // if User doesn't exist, create a new entry
+            await db.none(
+              "INSERT INTO users (name, count) VALUES ($1, 1)",
+              userName.toLowerCase()
+            );
+          }
+        } catch (error) {
+          console.error("Error in greetUser:", error);
+
+          return "An error occurred while processing the request.";
         }
       } else {
         return error(userName, language);
@@ -27,6 +57,7 @@ export default function greetMe(myCounter) {
       return error(userName, language);
     }
   }
+
   function error(userName, language) {
     if (!userName && !language) {
       myMessage = "Please enter valid name and choose language";

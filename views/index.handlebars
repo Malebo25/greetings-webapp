@@ -1,3 +1,6 @@
+<a href="/">Home</a>
+<a href="/greeted">Greeted</a>
+<a href="/reset">Reset</a>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -21,10 +24,6 @@
     <div class="row">
       <div class="col-12">
         <center>
-          <div>
-
-            <span class="counter">{{counter}}</span>
-          </div>
           <div class="col-12">
             <center>
 
@@ -32,9 +31,15 @@
             </center>
           </div>
           <form class="textbox" action="/details" method="POST">
+            
             <label for="name">Name:</label>
 
             <input type="text" name="name" id="" class="nameText" value="" />
+            
+          <div >
+
+            <span class="counter">{{counter}}</span>
+          </div>
 
           <div class="col-12 languageBTN">
             <center>

@@ -1,10 +1,21 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import exphbs from "express-handlebars";
 
 import greetMe from "./greet2.js";
 import flash from "express-flash";
 import session from "express-session";
+import pgPromise from "pg-promise";
+
+const pgp = pgPromise();
 const app = express(); //instantiate app
+
+const connectionString =
+  process.env.DATABASE_URL ||
+  "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
+const db = pgp(connectionString);
 
 const greet = greetMe();
 const handlebarSetup = exphbs.engine({
@@ -69,7 +80,6 @@ app.get("/reset", function (req, res) {
   res.redirect("/");
 });
 const PORT = process.env.PORT || 3009;
-
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });
