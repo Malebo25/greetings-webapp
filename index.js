@@ -16,8 +16,8 @@ const connectionString =
   process.env.DATABASE_URL ||
   "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
 const db = pgp(connectionString);
-
-const greet = greetMe();
+const Counter = 0;
+const greet = greetMe(Counter, db);
 const handlebarSetup = exphbs.engine({
   partialsDir: "./views/partials",
   viewPath: "./views",
@@ -60,17 +60,25 @@ app.post("/details", function (req, res) {
   }
 
   greet.greetUser(req.body.name, req.body.languagetype);
-  greet.namesAndCounter(req.body.name, req.body.languagetype);
+
   res.redirect("/");
 });
-app.get("/greeted", function (req, res) {
-  const greetedNames = Object.keys(greet.getNamesGreeted()); // to get object keys which are names entered keys
-  res.render("greeted", { namesGreeted: greetedNames });
-  console.log(greetedNames);
+
+app.get("/greeted", async function (req, res) {
+  try {
+    const greetedNames = await greet.getNamesGreeted(); // Wait for the Promise to resolve
+    console.log(greetedNames); // Now you can log the resolved data
+
+    res.render("greeted", { namesGreeted: greetedNames });
+  } catch (error) {
+    console.error("Error in /greeted route:", error);
+    res.status(500).send("An error occurred while fetching greeted names.");
+  }
 });
-app.get("/counter/:userName", function (req, res) {
+
+app.get("/counter/:userName", async function (req, res) {
   const userName = req.params.userName.toLowerCase();
-  const greetCount = greet.getGreetCountForUser(userName);
+  const greetCount = await greet.getGreetCountForUser(userName); // Await the result
 
   res.render("counter", { userName, greetCount });
 });
@@ -79,7 +87,7 @@ app.get("/reset", function (req, res) {
   greet.reset(); // Call the reset function to clear counter and message
   res.redirect("/");
 });
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });

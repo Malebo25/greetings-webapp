@@ -1,18 +1,8 @@
-import dotenv from "dotenv";
-dotenv.config();
-import pgPromise from "pg-promise";
-
-const pgp = pgPromise();
-const connectionString =
-  process.env.DATABASE_URL ||
-  "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
-const db = pgp(connectionString);
-
-export default function greetMe(myCounter) {
+export default function greetMe(myCounter, db) {
   var patternCheck = /^[a-zA-Z]+$/;
   var greetingsCounter = myCounter || 0;
   var myMessage = "";
-  var namesGreeted = {};
+
   var user;
   async function greetUser(userName, language) {
     if (userName && language) {
@@ -34,6 +24,7 @@ export default function greetMe(myCounter) {
 
           if (existingUser) {
             // User exists, update the count
+            greetingsCounter++;
             await db.none(
               "UPDATE users SET count = count + 1 WHERE name = $1",
               userName.toLowerCase()
@@ -77,21 +68,34 @@ export default function greetMe(myCounter) {
     }
   }
 
-  function namesAndCounter(userName, language) {
-    var pattern = /^[a-zA-Z]+$/;
-    //when the greet button is pressed check if this user was already greeted before
-    //by looking if the userName exists in namesGreeted if not increment this counter and update the screen
-    if (namesGreeted[userName] === undefined) {
-      if (pattern.test(userName.toLowerCase()) && language !== null) {
-        greetingsCounter++;
-      }
-      //add an entry for the user that was greeted in the Object Map
-      namesGreeted[userName.toLowerCase()] = 1;
-    } else {
-      // update the counter for a specific username
-      namesGreeted[userName.toLowerCase()]++;
-    }
-  }
+  // async function namesAndCounter(userName, language) {
+  //   var pattern = /^[a-zA-Z]+$/;
+  //   if (pattern.test(userName.toLowerCase()) && language !== null) {
+  //     try {
+  //       // Check if the user exists in the "users" table
+  //       const existingUser = await db.oneOrNone(
+  //         "SELECT * FROM users WHERE name = $1",
+  //         userName.toLowerCase()
+  //       );
+
+  //       if (existingUser) {
+  //         // User exists, update the count
+  //         await db.none(
+  //           "UPDATE users SET count = count + 1 WHERE name = $1",
+  //           userName.toLowerCase()
+  //         );
+  //       } else {
+  //         // If User doesn't exist, create a new entry
+  //         await db.none(
+  //           "INSERT INTO users (name, count) VALUES ($1, 1)",
+  //           userName.toLowerCase()
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error in namesAndCounter:", error);
+  //     }
+  //   }
+  // }
   function setUser(name) {
     user = name;
   }
@@ -102,26 +106,58 @@ export default function greetMe(myCounter) {
   function getCounter() {
     return greetingsCounter;
   }
-  function getNamesGreeted() {
-    return namesGreeted;
-  }
+
   function getMessage() {
     return myMessage;
   }
-  function reset() {
-    greetingsCounter = 0; // Reset the counter
-    myMessage = ""; // Reset the message
-    namesGreeted = {}; // Clear the namesGreeted object
+  async function getNamesGreeted() {
+    try {
+      // Fetch distinct greeted names from the database
+      const result = await db.any("SELECT DISTINCT name FROM users");
+      const greetedNames = result.map((row) => row.name);
+      return greetedNames;
+    } catch (error) {
+      console.error("Error in getNamesGreeted:", error);
+      return [];
+    }
   }
-  function getGreetCountForUser(userName) {
-    return namesGreeted[userName.toLowerCase()] || 0;
+
+  async function getGreetCountForUser(userName) {
+    try {
+      // Fetch the greeting count for the  user from the database
+      const result = await db.oneOrNone(
+        "SELECT SUM(count) FROM users WHERE name = $1",
+        userName.toLowerCase()
+      );
+
+      if (result) {
+        return result.sum || 0; // Return the sum of counts or 0 if there's no result
+      } else {
+        return 0; // Return 0 if the user is not found
+      }
+    } catch (error) {
+      console.error("Error in getGreetCountForUser:", error);
+      return 0;
+    }
+  }
+
+  async function reset() {
+    try {
+      // Reseting the counter and message
+      greetingsCounter = 0;
+      myMessage = "";
+
+      // Deleting  records from the 'users' table
+      await db.none("DELETE FROM users");
+    } catch (error) {
+      console.error("Error in reset:", error);
+    }
   }
 
   return {
     greetUser,
     setUser,
     getUser,
-    namesAndCounter,
     getCounter,
     getNamesGreeted,
     error,
