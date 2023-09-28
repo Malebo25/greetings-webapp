@@ -74,3 +74,37 @@ describe("GreetMe Module", () => {
     assert.strictEqual(message, "");
   });
 });
+it("should greet a user in English", async () => {
+  const message = await greet.greetUser("Alice", "english");
+  assert.strictEqual(message, "Hello Alice");
+});
+
+it("should greet a user in Setswana", async () => {
+  const message = await greet.greetUser("Bob", "setswana");
+  assert.strictEqual(message, "Dumela Bob");
+});
+
+it("should increment the counter when greeting an existing user", async () => {
+  await greet.greetUser("Alice", "english");
+  const counter = await greet.getGreetCountForUser("Alice");
+  assert.strictEqual(counter, 4);
+});
+
+it("should create a new user entry when greeting a new user", async () => {
+  await greet.greetUser("Charlie", "english");
+  const counter = await greet.getGreetCountForUser("Charlie");
+  assert.strictEqual(counter, 1);
+});
+
+it("should return a list of greeted names", async () => {
+  const greetedNames = await greet.getNamesGreeted();
+  assert.deepEqual(greetedNames, ["Alice", "Bob", "Charlie"]);
+});
+
+it("should reset the counter and message", async () => {
+  await greet.reset();
+  const counter = await greet.getCounter();
+  const message = await greet.getMessage();
+  assert.strictEqual(counter, 0);
+  assert.strictEqual(message, "");
+});

@@ -1,6 +1,6 @@
-export default function greetMe(myCounter, db) {
+export default function greetMe(db) {
   var patternCheck = /^[a-zA-Z]+$/;
-  var greetingsCounter = myCounter || 0;
+  var greetingsCounter = 0;
   var myMessage = "";
 
   var user;
@@ -24,7 +24,7 @@ export default function greetMe(myCounter, db) {
 
           if (existingUser) {
             // User exists, update the count
-            greetingsCounter++;
+
             await db.none(
               "UPDATE users SET count = count + 1 WHERE name = $1",
               userName.toLowerCase()
@@ -104,7 +104,17 @@ export default function greetMe(myCounter, db) {
     return user;
   }
   function getCounter() {
-    return greetingsCounter;
+    try {
+      // Fetch the total number of unique greeted names from the database
+      const result = await db.one(
+        "SELECT COUNT(*) FROM users"
+      );
+
+      return result.count || 0;
+    } catch (error) {
+      console.error("Error in getCounter:", error);
+      return 0;
+    }
   }
 
   function getMessage() {
