@@ -87,7 +87,7 @@ app.get("/reset", function (req, res) {
   greet.reset(); // Call the reset function to clear counter and message
   res.redirect("/");
 });
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3005 ;
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });
