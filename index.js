@@ -17,7 +17,7 @@ const connectionString =
   "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
 const db = pgp(connectionString);
 const Counter = 0;
-const greet = greetMe(Counter, db);
+const greet = greetMe(db);
 const handlebarSetup = exphbs.engine({
   partialsDir: "./views/partials",
   viewPath: "./views",
@@ -87,7 +87,7 @@ app.get("/reset", function (req, res) {
   greet.reset(); // Call the reset function to clear counter and message
   res.redirect("/");
 });
-const PORT = process.env.PORT || 3005 ;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });

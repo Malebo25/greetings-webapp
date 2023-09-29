@@ -103,12 +103,10 @@ export default function greetMe(db) {
   function getUser() {
     return user;
   }
-  function getCounter() {
+  async function getCounter() {
     try {
       // Fetch the total number of unique greeted names from the database
-      const result = await db.one(
-        "SELECT COUNT(*) FROM users"
-      );
+      const result = await db.one("SELECT COUNT(*) FROM users");
 
       return result.count || 0;
     } catch (error) {
