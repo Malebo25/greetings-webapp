@@ -1,30 +1,32 @@
 export default function query(db) {
-  async function insertIntoTable(userName) {
-    try {
-      // Check if the user exists in the "users" table
-      const existingUser = await db.oneOrNone(
-        "SELECT * FROM users WHERE name = $1",
-        userName.toLowerCase()
-      );
-
-      if (existingUser) {
-        // User exists, update the count
-
-        await db.none(
-          "UPDATE users SET count = count + 1 WHERE name = $1",
+  async function insertIntoTable(userName, lang) {
+    if (userName && lang) {
+      try {
+        // Check if the user exists in the "users" table
+        const existingUser = await db.oneOrNone(
+          "SELECT * FROM users WHERE name = $1",
           userName.toLowerCase()
         );
-      } else {
-        // if User doesn't exist, create a new entry
-        await db.none(
-          "INSERT INTO users (name, count) VALUES ($1, 1)",
-          userName.toLowerCase()
-        );
+
+        if (existingUser) {
+          // User exists, update the count
+
+          await db.none(
+            "UPDATE users SET count = count + 1 WHERE name = $1",
+            userName.toLowerCase()
+          );
+        } else {
+          // if User doesn't exist, create a new entry
+          await db.none(
+            "INSERT INTO users (name, count) VALUES ($1, 1)",
+            userName.toLowerCase()
+          );
+        }
+      } catch (error) {
+        console.error("Error in greetUser:", error);
+
+        return "An error occurred while processing the request.";
       }
-    } catch (error) {
-      console.error("Error in greetUser:", error);
-
-      return "An error occurred while processing the request.";
     }
   }
   async function getCounter() {
