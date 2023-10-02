@@ -1,6 +1,8 @@
 export default function query(db) {
+  var patternCheck = /^[a-zA-Z]+$/;
+
   async function insertIntoTable(userName, lang) {
-    if (userName && lang) {
+    if (patternCheck.test(userName) && lang) {
       try {
         // Check if the user exists in the "users" table
         const existingUser = await db.oneOrNone(
