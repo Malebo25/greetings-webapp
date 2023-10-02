@@ -1,110 +1,60 @@
 import assert from "assert";
-import greetMe from "../greet2.js";
-import pgp from "pg-promise";
+import query from "../service/query.js";
+import pgPromise from "pg-promise";
+import "dotenv/config";
 
-// Create a test database connection
-const db = pgp()({
-  database: "test_database", // Change to your test database name
+const pgp = pgPromise();
+
+const connectionString =
+  process.env.DATABASE_URL ||
+  "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
+const db = pgp(connectionString);
+
+const data = query(db);
+
+// Test cases for insertIntoTable function
+it("should insert a new user with count 1", async () => {
+  await data.insertIntoTable("Charlie");
+  const userCount = await db.one(
+    "SELECT count FROM users WHERE name = 'Charlie'"
+  );
+  assert.strictEqual(userCount.count, 1);
 });
 
-// Initialize the greetMe module with the test database
-const greet = greetMe(db);
-
-describe("GreetMe Module", () => {
-  // Increase the timeout for before and after hooks
-  this.timeout(5000); // Adjust the timeout as needed
-
-  // Before running tests, create a test table and insert test data
-  before(async () => {
-    // Create a test table if it doesn't exist
-    await db.none(`
-      CREATE TABLE IF NOT EXISTS users (
-        name TEXT PRIMARY KEY,
-        count INT
-      );
-    `);
-
-    // Insert some initial test data
-    await db.none(`
-      INSERT INTO users (name, count) VALUES
-      ('Alice', 3),
-      ('Bob', 2);
-    `);
-  });
-
-  // After running tests, drop the test table
-  after(async () => {
-    // Drop the test table
-    await db.none("DROP TABLE IF EXISTS users;");
-  });
-
-  // Test cases
-  it("should greet a user in English", async () => {
-    const message = await greet.greetUser("Alice", "english");
-    assert.strictEqual(message, "Hello Alice");
-  });
-
-  it("should greet a user in Setswana", async () => {
-    const message = await greet.greetUser("Bob", "setswana");
-    assert.strictEqual(message, "Dumela Bob");
-  });
-
-  it("should increment the counter when greeting an existing user", async () => {
-    await greet.greetUser("Alice", "english");
-    const counter = await greet.getGreetCountForUser("Alice");
-    assert.strictEqual(counter, 4);
-  });
-
-  it("should create a new user entry when greeting a new user", async () => {
-    await greet.greetUser("Charlie", "english");
-    const counter = await greet.getGreetCountForUser("Charlie");
-    assert.strictEqual(counter, 1);
-  });
-
-  it("should return a list of greeted names", async () => {
-    const greetedNames = await greet.getNamesGreeted();
-    assert.deepEqual(greetedNames, ["Alice", "Bob", "Charlie"]);
-  });
-
-  it("should reset the counter and message", async () => {
-    await greet.reset();
-    const counter = await greet.getCounter();
-    const message = await greet.getMessage();
-    assert.strictEqual(counter, 0);
-    assert.strictEqual(message, "");
-  });
-});
-it("should greet a user in English", async () => {
-  const message = await greet.greetUser("Alice", "english");
-  assert.strictEqual(message, "Hello Alice");
+it("should increment the count for an existing user", async () => {
+  await data.insertIntoTable("Alice");
+  const userCount = await db.one(
+    "SELECT count FROM users WHERE name = 'Alice'"
+  );
+  assert.strictEqual(userCount.count, 4);
 });
 
-it("should greet a user in Setswana", async () => {
-  const message = await greet.greetUser("Bob", "setswana");
-  assert.strictEqual(message, "Dumela Bob");
+// Test cases for getCounter function
+it("should return the total count of users", async () => {
+  const counter = await data.getCounter();
+  assert.strictEqual(counter, 2); // There are two users in the test data
 });
 
-it("should increment the counter when greeting an existing user", async () => {
-  await greet.greetUser("Alice", "english");
-  const counter = await greet.getGreetCountForUser("Alice");
-  assert.strictEqual(counter, 4);
-});
-
-it("should create a new user entry when greeting a new user", async () => {
-  await greet.greetUser("Charlie", "english");
-  const counter = await greet.getGreetCountForUser("Charlie");
-  assert.strictEqual(counter, 1);
-});
-
-it("should return a list of greeted names", async () => {
-  const greetedNames = await greet.getNamesGreeted();
+// Test cases for getNamesGreeted function
+it("should return an array of greeted names", async () => {
+  const greetedNames = await data.getNamesGreeted();
   assert.deepEqual(greetedNames, ["Alice", "Bob", "Charlie"]);
 });
 
-it("should reset the counter and message", async () => {
-  await greet.reset();
-  const counter = await greet.getCounter();
-  const message = await greet.getMessage();
-  assert.strictEqual(counter, 0);
-  assert.strictEqual(message, "");
+// Test cases for getGreetCountForUser function
+it("should return the greet count for an existing user", async () => {
+  const count = await data.getGreetCountForUser("Alice");
+  assert.strictEqual(count, 3);
+});
+
+it("should return 0 for a user that does not exist", async () => {
+  const count = await data.getGreetCountForUser("Eve");
+  assert.strictEqual(count, 0);
+});
+
+// Test cases for reset function
+it("should delete all records from the 'users' table", async () => {
+  await data.reset();
+  const counter = await data.getCounter();
+  assert.strictEqual(counter, 0); // No users should remain after reset
 });

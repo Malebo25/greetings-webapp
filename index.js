@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import exphbs from "express-handlebars";
-
+import query from "./service/query.js";
 import greetMe from "./greet2.js";
 import flash from "express-flash";
 import session from "express-session";
@@ -16,6 +16,7 @@ const connectionString =
   process.env.DATABASE_URL ||
   "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
 const db = pgp(connectionString);
+const data = query(db);
 const Counter = 0;
 const greet = greetMe(db);
 const handlebarSetup = exphbs.engine({
@@ -45,11 +46,14 @@ app.use(
 // initialise the flash middleware
 app.use(flash());
 
-app.get("/", function (req, res) {
+app.get("/", async function (req, res) {
   //set default root
+  const counts = await data.getCounter();
+  console.log(counts);
   res.render("index", {
     message: greet.getMessage(),
-    counter: greet.getCounter(),
+    counter: counts,
+
     greet,
   });
 });
@@ -58,7 +62,7 @@ app.post("/details", function (req, res) {
   if (!req.body.name) {
     req.flash("error", "Please enter a name"); // Set a flash message for no username
   }
-
+  data.insertIntoTable(req.body.name);
   greet.greetUser(req.body.name, req.body.languagetype);
 
   res.redirect("/");
@@ -66,7 +70,7 @@ app.post("/details", function (req, res) {
 
 app.get("/greeted", async function (req, res) {
   try {
-    const greetedNames = await greet.getNamesGreeted(); // Wait for the Promise to resolve
+    const greetedNames = await data.getNamesGreeted(); // Wait for the Promise to resolve
     console.log(greetedNames); // Now you can log the resolved data
 
     res.render("greeted", { namesGreeted: greetedNames });
@@ -78,16 +82,17 @@ app.get("/greeted", async function (req, res) {
 
 app.get("/counter/:userName", async function (req, res) {
   const userName = req.params.userName.toLowerCase();
-  const greetCount = await greet.getGreetCountForUser(userName); // Await the result
+  const greetCount = await data.getGreetCountForUser(userName); // Await the result
 
   res.render("counter", { userName, greetCount });
 });
 
 app.get("/reset", function (req, res) {
-  greet.reset(); // Call the reset function to clear counter and message
+  data.reset(); // Call the reset function to clear counter and message
+  greet.greetUser();
   res.redirect("/");
 });
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3004;
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });
