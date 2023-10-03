@@ -48,21 +48,27 @@ app.use(flash());
 app.get("/", async function (req, res) {
   //set default root
   const counts = await data.getCounter();
-  console.log(counts);
-  res.render("index", {
-    message: greet.getMessage(),
-    counter: counts,
 
-    greet,
+  res.render("index", {
+    counter: counts,
+    message: greet.getMessage(),
   });
 });
 
 app.post("/details", function (req, res) {
-  if (!req.body.name) {
+  const languageChoice = req.body.languagetype;
+  const nameEntry = req.body.name;
+
+  if (!languageChoice && !nameEntry) {
+    req.flash("error", "Please choose a language and enter valid name");
+  } else if (nameEntry === "") {
     req.flash("error", "Please enter a name"); // Set a flash message for no username
+  } else if (!languageChoice) {
+    req.flash("error", "Please choose a language");
+  } else {
+    data.insertIntoTable(nameEntry, languageChoice);
+    greet.greetUser(nameEntry, languageChoice);
   }
-  data.insertIntoTable(req.body.name, req.body.languagetype);
-  greet.greetUser(req.body.name, req.body.languagetype);
 
   res.redirect("/");
 });
@@ -87,11 +93,13 @@ app.get("/counter/:userName", async function (req, res) {
 });
 
 app.get("/reset", function (req, res) {
-  data.reset(); // Call the reset function to clear counter and message
-  greet.greetUser();
+  // Call the reset function to clear counter and message
+  data.reset();
+  greet.reset();
+
   res.redirect("/");
 });
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, function () {
   console.log("App started at port", PORT);
 });

@@ -26,8 +26,14 @@
         <center>
           <div class="col-12">
             <center>
+              
 
               <span class="greetUserName" value="">{{message}}</span>
+              
+              
+              <span class="greetUserError" value="">{{messages.error}}</span>
+
+
             </center>
           </div>
           <form class="textbox" action="/details" method="POST">
@@ -93,6 +99,22 @@
 
     </div>
     
+{{!-- <script>
+  // Get all elements with the class name "greetUserName"
+  const messageElements = document.getElementsByClassName('greetUserName');
+
+  // Function to hide the message after a delay (e.g., 3000 milliseconds = 3 seconds)
+  function hideMessage() {
+    // Loop through all elements with the class name and clear their innerHTML
+    for (let i = 0;i< messageElements.length; i++) {
+      messageElements[i].innerHTML = ''; // Clear the content for each element
+    }
+  }
+
+  // Set a timeout to hide the message after 3 seconds (adjust the time as needed)
+  setTimeout(hideMessage, 3000); // 3 seconds (3000 milliseconds)
+</script> --}}
+
 
   </body>
 </html>

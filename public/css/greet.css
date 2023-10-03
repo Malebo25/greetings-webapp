@@ -73,7 +73,7 @@ button:hover {
   width: 30%;
   font-size: 2em;
 }
-.danger {
+.greetUserError {
   color: red;
 }
 .success {
