@@ -48,7 +48,9 @@ app.use(flash());
 app.get("/", async function (req, res) {
   //set default root
   const counts = await data.getCounter();
-
+  setTimeout(() => {
+    greet.reset(); // Clear the message
+  }, 3000);
   res.render("index", {
     counter: counts,
     message: greet.getMessage(),
