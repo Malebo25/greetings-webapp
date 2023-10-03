@@ -81,7 +81,7 @@ app.post("/details", function (req, res) {
 app.get("/greeted", async function (req, res) {
   try {
     const greetedNames = await data.getNamesGreeted(); // Wait for the Promise to resolve
-    console.log(greetedNames); // Now you can log the resolved data
+    console.log(greetedNames);
 
     res.render("greeted", { namesGreeted: greetedNames });
   } catch (error) {
