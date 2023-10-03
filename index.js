@@ -11,6 +11,7 @@ import pgPromise from "pg-promise";
 
 const pgp = pgPromise();
 const app = express(); //instantiate app
+var patternCheck = /^[a-zA-Z]+$/;
 
 const connectionString =
   "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
@@ -67,6 +68,8 @@ app.post("/details", function (req, res) {
     req.flash("error", "Please enter a name"); // Set a flash message for no username
   } else if (!languageChoice) {
     req.flash("error", "Please choose a language");
+  } else if (!patternCheck.test(nameEntry)) {
+    req.flash("error", "Please enter valid name (letters)");
   } else {
     data.insertIntoTable(nameEntry, languageChoice);
     greet.greetUser(nameEntry, languageChoice);

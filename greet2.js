@@ -23,7 +23,7 @@ export default function greetMe() {
       myMessage = "Please enter valid name and choose language";
       return myMessage;
     } else if (!userName) {
-      // myMessage = "Please enter name";
+      myMessage = "Please enter name";
       return myMessage;
     } else if (userName === "" && language === null) {
       myMessage = "Please enter valid name and choose language";
