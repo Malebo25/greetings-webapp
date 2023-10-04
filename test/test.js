@@ -68,7 +68,7 @@ it("should return the total count of users", async () => {
 it("should return an array of greeted names", async () => {
   const greetedNames = await data.getNamesGreeted();
 
-  assert.deepEqual(greetedNames, ["charlie", "alice"]);
+  assert.deepEqual(greetedNames, ["alice", "charlie"]);
 });
 
 // // Test cases for getGreetCountForUser function
