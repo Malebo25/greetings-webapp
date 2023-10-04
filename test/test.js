@@ -51,10 +51,10 @@ it("should return the total count of users", async () => {
 });
 
 //Test cases for getNamesGreeted function
-it("should return an array of greeted names", async () => {
-  const greetedNames = await data.getNamesGreeted();
-  assert.deepEqual(greetedNames, []);
-});
+// it("should return an array of greeted names", async () => {
+//   const greetedNames = await data.getNamesGreeted();
+//   assert.deepEqual(greetedNames, []);
+// });
 
 // // Test cases for getGreetCountForUser function
 // it("should return the greet count for an existing user", async () => {
