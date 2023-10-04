@@ -12,6 +12,20 @@ const db = pgp(connectionString);
 
 const data = query(db);
 
+const clearUsersTable = async () => {
+  try {
+    await db.none("DELETE FROM users");
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+// Before running tests, clear the users table
+before(async () => {
+  await clearUsersTable();
+});
+
 // Test cases for insertIntoTable function
 it("should insert a new user with count 1", async () => {
   try {
@@ -51,25 +65,26 @@ it("should return the total count of users", async () => {
 });
 
 //Test cases for getNamesGreeted function
-// it("should return an array of greeted names", async () => {
-//   const greetedNames = await data.getNamesGreeted();
-//   assert.deepEqual(greetedNames, []);
-// });
+it("should return an array of greeted names", async () => {
+  const greetedNames = await data.getNamesGreeted();
+
+  assert.deepEqual(greetedNames, ["charlie", "alice"]);
+});
 
 // // Test cases for getGreetCountForUser function
-// it("should return the greet count for an existing user", async () => {
-//   const count = await data.getGreetCountForUser("Alice");
-//   assert.strictEqual(count, 2);
-// });
+it("should return the greet count for an existing user", async () => {
+  const count = await data.getGreetCountForUser("Alice");
+  assert.strictEqual(count, 2);
+});
 
-// it("should return 0 for a user that does not exist", async () => {
-//   const count = await data.getGreetCountForUser("Eve");
-//   assert.strictEqual(count, 0);
-// });
+it("should return 0 for a user that does not exist", async () => {
+  const count = await data.getGreetCountForUser("Eve");
+  assert.strictEqual(count, 0);
+});
 
-// // Test cases for reset function
-// it("should delete all records from the 'users' table", async () => {
-//   await data.reset();
-//   const counter = await data.getCounter();
-//   assert.strictEqual(counter, 0); // No users should remain after reset
-// });
+// Test cases for reset function
+it("should delete all records from the 'users' table", async () => {
+  await data.reset();
+  const counter = await data.getCounter();
+  assert.strictEqual(Number(counter.count), 0); // No users should remain after reset
+});
