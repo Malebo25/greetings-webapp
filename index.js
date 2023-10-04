@@ -17,7 +17,7 @@ const connectionString =
   "postgres://greet_lc9j_user:00OQ8P8oZUrXO2RPkzxN6bxtaEMGMk52@dpg-cji98b0cfp5c73a0b1n0-a.oregon-postgres.render.com/greet_lc9j?ssl=true";
 const db = pgp(connectionString);
 const data = query(db);
-const Counter = 0;
+
 const greet = greetMe(db);
 const handlebarSetup = exphbs.engine({
   partialsDir: "./views/partials",
