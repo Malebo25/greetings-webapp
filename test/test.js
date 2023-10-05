@@ -57,18 +57,31 @@ it("should increment the count for an existing user", async () => {
     throw error;
   }
 });
+it("Test for duplicates, same name should appear once on the database", async () => {
+  try {
+    await data.insertIntoTable("Kayla", "english");
+    await data.insertIntoTable("kayla", "english");
+    const greetedNames = await data.getNamesGreeted();
+
+    assert.deepEqual(greetedNames.sort(), ["alice", "charlie", "kayla"].sort());
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+});
+//
 
 //Test cases for getCounter function
 it("should return the total count of users", async () => {
   const counter = await data.getCounter();
-  assert.deepStrictEqual(Number(counter.count), 2);
+  assert.deepStrictEqual(Number(counter.count), 3);
 });
 
 //Test cases for getNamesGreeted function
 it("should return an array of greeted names", async () => {
   const greetedNames = await data.getNamesGreeted();
 
-  assert.deepEqual(greetedNames.sort(), ["alice", "charlie"].sort());
+  assert.deepEqual(greetedNames.sort(), ["alice", "charlie", "kayla"].sort());
 });
 
 // // Test cases for getGreetCountForUser function

@@ -1,19 +1,23 @@
-<a href="/">Home</a>
-<a href="/greeted">Greeted</a>
+<center>
+  <a href="/">Home</a>
 
-<div class="row">
+  <a href="/greeted">Greeted</a>
 
-  <h1>Names greeted</h1>
-  <table>
-    <tr>
-      <th>Names</th>
+  <div class="row">
 
-    </tr>
-    {{#each namesGreeted}}
+    <h1>Names greeted</h1>
+    <table>
       <tr>
-        <td><a href="/counter/{{this}}">{{this}}</a></td>
+        <th></th>
 
       </tr>
-    {{/each}}
-  </table>
-</div>
+      {{#each namesGreeted}}
+        <tr>
+          <td><a href="/counter/{{this}}">{{this}}</a></td>
+
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+
+</center>
